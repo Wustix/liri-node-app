@@ -1,6 +1,6 @@
 require("dotenv").config();
 var fs = require("fs");
-var request = require("request");
+
 var keys = require("./keys.js");
 
 
@@ -25,7 +25,7 @@ var myTweets = function () {
 
 var spotifyThisSong = function () {
 
-    var spotify = require("spotify");
+    let spotify = require("spotify");
     var spotify = new Spotify(keys.spotify);
 
     spotify.search({ type: 'track', query: process.argv[3] }, function (err, data) {
@@ -43,5 +43,22 @@ var spotifyThisSong = function () {
 var movieThis = function () {
 
 
+    let request = require("request");
+    let title = process.argv[2];
+    let queryUrl = `http://www.omdbapi.com/?t=${title}&y=&plot=short&apikey=trilogy`;
+
+    request(queryUrl, function (error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+            console.log(`Title: ${JSON.parse(body).Title}`);
+            console.log(`Release Year: ${JSON.parse(body).Year}`);
+            console.log(`Rating: ${JSON.parse(body).Rated}`);
+            console.log(`Plot: ${JSON.parse(body).Plot}`);
+            console.log(`Rotten Tomatoes: ${JSON.parse(body).Ratings[1].Value}`);
+        }
+
+        else console.log(error);
+
+    });
 
 }
