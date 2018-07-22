@@ -6,16 +6,18 @@ var command = process.argv[2];
 var query = process.argv[3];
 
 
-// var spotify = new Spotify(keys.spotify);
-// var client = new Twitter(keys.twitter);
+
+
 
 var myTweets = function () {
 
-    //let twitter = require("twitter");
+
+    var Twitter = require('twitter');
     var client = new Twitter(keys.twitter);
 
+
     var params = {
-        screen_name: 'GiantGreenLion',
+        screen_name: 'wustix54',
         count: 20
     };
 
@@ -34,46 +36,61 @@ var myTweets = function () {
 
 }
 
-var spotifyThisSong = function () {
+var spotifyThisSong = function (trackQuery) {
 
-    //let spotify = require("spotify");
+
+    var Spotify = require('node-spotify-api');
     var spotify = new Spotify(keys.spotify);
 
-    if (trackQuery === undefined) {
+    if (trackQuery === null) {
         trackQuery = "the sign ace of base";
     }
 
-    spotify.search({ type: 'track', query: process.argv[3] }, function (err, data) {
+    spotify.search({ type: 'track', query: trackQuery }, function (err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
 
-        console.log("Song" + data.tracks.items[0].name);
-        console.log("Preview Link" + data.tracks.items[0].preview.url);
-        console.log("Album" + data.tracks.items[0].album.name);
-    });
+        console.log("Artist(s): " + data.tracks.items[0].artists[0].name);
+        console.log("Song: " + data.tracks.items[0].name);
+        console.log("Preview Link: " + data.tracks.items[0].preview_url);
+        console.log("Album: " + data.tracks.items[0].album.name);
 
+
+    });
 }
 
-var movieThis = function () {
+var movieThis = function (movieQuery) {
+    // Load request npm module
+    var request = require("request");
 
+    // if query that is passed in is undefined, Mr. Nobody becomes the default
+    if (movieQuery === undefined) {
+        movieQuery = "mr nobody";
+    }
 
-    let request = require("request");
-    let title = process.argv[2];
-    let queryUrl = `http://www.omdbapi.com/?t=${title}&y=&plot=short&apikey=trilogy`;
-
-    request(queryUrl, function (error, response, body) {
-
+    // HTTP GET request
+    request("http://www.omdbapi.com/?t=" + movieQuery + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            console.log(`Title: ${JSON.parse(body).Title}`);
-            console.log(`Release Year: ${JSON.parse(body).Year}`);
-            console.log(`Rating: ${JSON.parse(body).Rated}`);
-            console.log(`Plot: ${JSON.parse(body).Plot}`);
-            console.log(`Rotten Tomatoes: ${JSON.parse(body).Ratings[1].Value}`);
+            console.log("* Title of the movie:         " + JSON.parse(body).Title);
+            console.log("* Year the movie came out:    " + JSON.parse(body).Year);
+            console.log("* IMDB Rating of the movie:   " + JSON.parse(body).imdbRating);
+            console.log("* Country produced:           " + JSON.parse(body).Country);
+            console.log("* Language of the movie:      " + JSON.parse(body).Language);
+            console.log("* Plot of the movie:          " + JSON.parse(body).Plot);
+            console.log("* Actors in the movie:        " + JSON.parse(body).Actors);
+
+            // For loop parses through Ratings object to see if there is a RT rating
+            // 	--> and if there is, it will print it
+            for (var i = 0; i < JSON.parse(body).Ratings.length; i++) {
+                if (JSON.parse(body).Ratings[i].Source === "Rotten Tomatoes") {
+                    console.log("* Rotten Tomatoes Rating:     " + JSON.parse(body).Ratings[i].Value);
+                    if (JSON.parse(body).Ratings[i].Website !== undefined) {
+                        console.log("* Rotten Tomatoes URL:        " + JSON.parse(body).Ratings[i].Website);
+                    }
+                }
+            }
         }
-
-        else console.log(error);
-
     });
 
 }
@@ -109,12 +126,12 @@ if (command === "my-tweets") {
             spotifyThisSong(query);
         } else if (command === "movie-this") {
             movieThis(query);
-        } else { // Use case where the command is not recognized
+        } else { // If command is not recognized
             console.log("Command from file is not a valid command! Please try again.")
         }
     });
-} else if (command === undefined) { // use case where no command is given
+} else if (command === undefined) { // If no command is given
     console.log("Please enter a command to run LIRI.")
-} else { // use case where command is given but not recognized
+} else { // If command is given but not recognized
     console.log("Command not recognized! Please try again.")
 }
