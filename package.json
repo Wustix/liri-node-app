@@ -19,9 +19,9 @@
   "homepage": "https://github.com/Wustix/liri-node-app#readme",
   "dependencies": {
     "all": "0.0.0",
-    "dotenv": "^6.2.0",
+    "dotenv": "^10.0.0",
     "fs": "0.0.1-security",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-spotify-api": "^1.1.1",
     "request": "^2.88.2",
     "require": "^2.4.20",
