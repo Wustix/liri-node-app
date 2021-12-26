@@ -21,6 +21,7 @@
     "all": "0.0.0",
     "dotenv": "^10.0.0",
     "fs": "0.0.1-security",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.21",
     "node-spotify-api": "^1.1.1",
     "request": "^2.88.2",
